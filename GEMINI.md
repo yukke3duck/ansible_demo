@@ -62,3 +62,6 @@ This project will be built from scratch as there are no existing playbooks.
 ## 6. Execution Environment
 
 The Ansible playbooks in this project are designed to be executed via AWX.
+
+## Gemini Added Memories
+- After modifying any Ansible code, I must always run `./runner.sh ansible-lint` to validate the changes.
