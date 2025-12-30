@@ -1,0 +1,34 @@
+---
+- name: Install IIS
+  ansible.windows.win_feature:
+    name: Web-Server
+    state: present
+
+- name: Download Sakura Editor installer
+  ansible.windows.win_get_url:
+    url: https://github.com/sakura-editor/sakura/releases/download/v2.4.2/sakura-tag-v2.4.2-build4203-a3e63915b-Win32-Release-Installer.zip
+    dest: "{{ ansible_facts.temp }}/sakura_installer.zip"
+
+- name: Create directory for Sakura Editor installer
+  ansible.windows.win_file:
+    path: "{{ ansible_facts.temp }}/sakura_installer"
+    state: directory
+
+- name: Unzip Sakura Editor installer
+  community.windows.win_unzip:
+    src: "{{ ansible_facts.temp }}/sakura_installer.zip"
+    dest: "{{ ansible_facts.temp }}/sakura_installer"
+    rm: true
+
+- name: Find the Sakura Editor installer file
+  ansible.windows.win_find:
+    paths: "{{ ansible_facts.temp }}/sakura_installer"
+    patterns: "*installer*.exe"
+  register: web_server_sakura_installer_file
+
+- name: Install Sakura Editor
+  ansible.windows.win_package:
+    path: "{{ web_server_sakura_installer_file.files[0].path }}"
+    state: present
+    arguments: /S
+  when: sakura_installer_file.matched > 0
